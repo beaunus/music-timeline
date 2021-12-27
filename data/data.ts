@@ -7,6 +7,11 @@ export interface Release {
 export const getReleases = (): Promise<Release[]> =>
   Promise.resolve([
     {
+      artistId: "Sunmi",
+      releaseDate: new Date("22 October 1963"),
+      title: "Whatever",
+    },
+    {
       artistId: "The Beatles",
       releaseDate: new Date("22 March 1963"),
       title: "Please Please Me",
@@ -48,7 +53,7 @@ export const getReleases = (): Promise<Release[]> =>
     },
     {
       artistId: "The Beatles",
-      releaseDate: new Date("27 November 1967[E]"),
+      releaseDate: new Date("27 November 1967"),
       title: "Magical Mystery Tour",
     },
     {
