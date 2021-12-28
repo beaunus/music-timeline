@@ -13,6 +13,7 @@ const Home: NextPage = () => {
     getReleases().then(setReleases);
   }, []);
 
+  const releasesByArtist = _.groupBy(releases, "artistId");
   const yearsSorted = _.uniq(
     releases?.map((release) => `${getYear(release.releaseDate)}`)
   ).sort();
@@ -30,7 +31,7 @@ const Home: NextPage = () => {
           <div key={_.uniqueId("year")}>{year}</div>
         ))}
       </div>
-      {Object.entries(_.groupBy(releases, "artistId")).flatMap(
+      {Object.entries(releasesByArtist).flatMap(
         ([artistId, artistReleases]) => [
           <div className="text-right" key={_.uniqueId("artistId")}>
             {artistId}
