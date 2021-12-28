@@ -47,10 +47,13 @@ jobs:
       - run:
           name: Build
           command: yarn build
+      - run:
+          name: Export
+          command: yarn next export
       - persist_to_workspace:
-          root: ./react
+          root: .
           paths:
-            - dist
+            - out
 
   react-deploy-stg:
     docker:
@@ -59,7 +62,7 @@ jobs:
       - attach_workspace:
           at: ./
       - aws-s3/sync:
-          from: ./dist
+          from: ./out
           to: ${STG_BUCKET}
           arguments: |
             --acl public-read
@@ -71,7 +74,7 @@ jobs:
       - attach_workspace:
           at: ./
       - aws-s3/sync:
-          from: ./dist
+          from: ./out
           to: ${PROD_BUCKET}
           arguments: |
             --acl public-read
