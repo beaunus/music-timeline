@@ -1,0 +1,79 @@
+version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@1.0.16
+
+workflows:
+  version: 2
+  react-build-deploy:
+    jobs:
+      - react-build
+      - react-approve-deploy-stg:
+          type: approval
+          requires:
+            - react-build
+      - react-approve-deploy-prod:
+          type: approval
+          requires:
+            - react-build
+      - react-deploy-stg:
+          requires:
+            - react-approve-deploy-stg
+      - react-deploy-prod:
+          requires:
+            - react-approve-deploy-prod
+
+jobs:
+  react-build:
+    docker:
+      - image: circleci/node:14.8.0
+
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --immutable
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - "~/.cache/yarn deploy:"
+      - run:
+          name: Copy Environment Variables
+          command: env > .env
+      - run:
+          name: Build
+          command: yarn workspace react build
+      - persist_to_workspace:
+          root: ./react
+          paths:
+            - dist
+
+  react-deploy-stg:
+    docker:
+      - image: circleci/python
+    steps:
+      - attach_workspace:
+          at: ./
+      - aws-s3/sync:
+          from: ./dist
+          to: ${STG_BUCKET}
+          arguments: |
+            --acl public-read
+          overwrite: true
+
+  react-deploy-prod:
+    docker:
+      - image: circleci/python
+    steps:
+      - attach_workspace:
+          at: ./
+      - aws-s3/sync:
+          from: ./dist
+          to: ${PROD_BUCKET}
+          arguments: |
+            --acl public-read
+          overwrite: true
