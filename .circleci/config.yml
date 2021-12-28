@@ -46,7 +46,7 @@ jobs:
           command: env > .env
       - run:
           name: Build
-          command: yarn workspace react build
+          command: yarn build
       - persist_to_workspace:
           root: ./react
           paths:
