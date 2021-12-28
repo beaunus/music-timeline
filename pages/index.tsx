@@ -1,3 +1,4 @@
+import { getYear } from "date-fns";
 import _ from "lodash";
 import type { NextPage } from "next";
 import React, { useEffect } from "react";
@@ -12,24 +13,20 @@ const Home: NextPage = () => {
     getReleases().then(setReleases);
   }, []);
 
-  const TIMESTAMP_START = new Date("1963").valueOf();
-  const TIMESTAMP_END = new Date("1971").valueOf();
+  const yearsSorted = _.uniq(
+    releases?.map((release) => `${getYear(release.releaseDate)}`)
+  ).sort();
+
+  const TIMESTAMP_START = new Date(yearsSorted?.[0] || Date.now()).valueOf();
+  const TIMESTAMP_END = new Date(
+    yearsSorted?.[yearsSorted?.length - 1] || Date.now()
+  ).valueOf();
 
   return (
     <div className="grid grid-cols-[max-content_auto] space-x-1 w-full">
       <div />
       <div className="flex justify-between">
-        {[
-          "1963",
-          "1964",
-          "1965",
-          "1966",
-          "1967",
-          "1968",
-          "1969",
-          "1970",
-          "1971",
-        ].map((year) => (
+        {yearsSorted.map((year) => (
           <div key={_.uniqueId("year")}>{year}</div>
         ))}
       </div>
