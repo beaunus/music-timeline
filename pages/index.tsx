@@ -75,11 +75,10 @@ const Home: NextPage = () => {
 
   const [TIMESTAMP_START, TIMESTAMP_END] =
     mode === "byArtist"
-      ? [
-          new Date(_.first(yearsToRender) ?? Date.now()),
-          new Date(_.last(yearsToRender) ?? Date.now()),
-        ].map((date) => date.valueOf())
-      : [agesToRender[0], agesToRender[agesToRender.length - 1]].map(
+      ? [_.first(yearsToRender) ?? 0, _.last(yearsToRender) ?? 0].map(
+          (yearString) => new Date(yearString).valueOf()
+        )
+      : [_.first(agesToRender) ?? 0, _.last(agesToRender) ?? 0].map(
           (numYears) => numYears * NUM_MS_IN_ONE_YEAR
         );
 
