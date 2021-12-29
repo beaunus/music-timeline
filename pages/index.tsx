@@ -1,4 +1,9 @@
-import { differenceInYears, format, getYear } from "date-fns";
+import {
+  differenceInMilliseconds,
+  differenceInYears,
+  format,
+  getYear,
+} from "date-fns";
 import _ from "lodash";
 import type { NextPage } from "next";
 import React, { useEffect } from "react";
@@ -135,29 +140,32 @@ const Home: NextPage = () => {
                 <div key={_.uniqueId("year")}>{year}</div>
               ))}
             </div>
-            {Object.entries(releasesByArtist).flatMap(
-              ([artistId, artistReleases]) => [
-                <div className="text-right" key={_.uniqueId("artistId")}>
-                  {artistId}
-                </div>,
-                <div className="w-full" key={_.uniqueId("artistRelease")}>
-                  <div className="flex items-center">
-                    <div className="w-full h-0 border-b-2"></div>
-                  </div>
-                  <div className="relative">
-                    {artistReleases.map((release) => (
-                      <ReleaseComponent
-                        key={_.uniqueId("release")}
-                        numMsSinceStartTimestamp={
-                          release.releaseDate.valueOf() - TIMESTAMP_START
-                        }
-                        release={release}
-                      />
-                    ))}
-                  </div>
-                </div>,
-              ]
-            )}
+            {_.sortBy(
+              Object.entries(releasesByArtist),
+              ([, artistReleases]) =>
+                _.minBy(artistReleases, (release) => release.releaseDate)
+                  ?.releaseDate ?? 0
+            ).flatMap(([artistId, artistReleases]) => [
+              <div className="text-right" key={_.uniqueId("artistId")}>
+                {artistId}
+              </div>,
+              <div className="w-full" key={_.uniqueId("artistRelease")}>
+                <div className="flex items-center">
+                  <div className="w-full h-0 border-b-2"></div>
+                </div>
+                <div className="relative">
+                  {artistReleases.map((release) => (
+                    <ReleaseComponent
+                      key={_.uniqueId("release")}
+                      numMsSinceStartTimestamp={
+                        release.releaseDate.valueOf() - TIMESTAMP_START
+                      }
+                      release={release}
+                    />
+                  ))}
+                </div>
+              </div>,
+            ])}
           </>
         ) : (
           <>
@@ -167,31 +175,37 @@ const Home: NextPage = () => {
                 <div key={_.uniqueId("year")}>{year}</div>
               ))}
             </div>
-            {Object.entries(releasesByPersonId).flatMap(
-              ([personId, personReleases]) => [
-                <div className="text-right" key={_.uniqueId("artistId")}>
-                  {personId}
-                </div>,
-                <div className="w-full" key={_.uniqueId("artistRelease")}>
-                  <div className="flex items-center">
-                    <div className="w-full h-0 border-b-2"></div>
-                  </div>
-                  <div className="relative">
-                    {personReleases.map((release) => (
-                      <ReleaseComponent
-                        key={_.uniqueId("release")}
-                        numMsSinceStartTimestamp={
-                          release.releaseDate.valueOf() -
-                          personById[personId].dateOfBirth.valueOf() -
-                          TIMESTAMP_START
-                        }
-                        release={release}
-                      />
-                    ))}
-                  </div>
-                </div>,
-              ]
-            )}
+            {_.sortBy(
+              Object.entries(releasesByPersonId),
+              ([personId, personReleases]) =>
+                differenceInMilliseconds(
+                  _.minBy(personReleases, (release) => release.releaseDate)
+                    ?.releaseDate ?? 0,
+                  personById[personId].dateOfBirth
+                )
+            ).flatMap(([personId, personReleases]) => [
+              <div className="text-right" key={_.uniqueId("artistId")}>
+                {personId}
+              </div>,
+              <div className="w-full" key={_.uniqueId("artistRelease")}>
+                <div className="flex items-center">
+                  <div className="w-full h-0 border-b-2"></div>
+                </div>
+                <div className="relative">
+                  {personReleases.map((release) => (
+                    <ReleaseComponent
+                      key={_.uniqueId("release")}
+                      numMsSinceStartTimestamp={
+                        release.releaseDate.valueOf() -
+                        personById[personId].dateOfBirth.valueOf() -
+                        TIMESTAMP_START
+                      }
+                      release={release}
+                    />
+                  ))}
+                </div>
+              </div>,
+            ])}
           </>
         )}
       </div>
