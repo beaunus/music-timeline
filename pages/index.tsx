@@ -16,11 +16,12 @@ const Home: NextPage = () => {
   const [mode, setMode] = React.useState<Mode>("byMember");
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    Promise.all([getReleases(), getArtists()]).then(([releases, artists]) => {
-      setReleases(releases);
-      setArtists(artists);
-    });
+    Promise.all([getReleases(), getArtists()]).then(
+      ([allReleases, allArtists]) => {
+        setReleases(allReleases);
+        setArtists(allArtists);
+      }
+    );
   }, []);
 
   const releasesByArtist = _.groupBy(releases, "artistId");
