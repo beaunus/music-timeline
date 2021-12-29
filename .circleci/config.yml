@@ -66,6 +66,7 @@ jobs:
           to: ${STG_BUCKET}
           arguments: |
             --acl public-read
+          overwrite: true
 
   react-deploy-prod:
     docker:
@@ -74,7 +75,8 @@ jobs:
       - attach_workspace:
           at: ./
       - aws-s3/sync:
-          from: ./out
+          from: ./dist
           to: ${PROD_BUCKET}
           arguments: |
             --acl public-read
+          overwrite: true
