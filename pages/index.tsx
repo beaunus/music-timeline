@@ -76,8 +76,8 @@ const Home: NextPage = () => {
   const [TIMESTAMP_START, TIMESTAMP_END] =
     mode === "byArtist"
       ? [
-          new Date(yearsToRender[0] || Date.now()),
-          new Date(yearsToRender[yearsToRender.length - 1] || Date.now()),
+          new Date(_.first(yearsToRender) ?? Date.now()),
+          new Date(_.last(yearsToRender) ?? Date.now()),
         ].map((date) => date.valueOf())
       : [agesToRender[0], agesToRender[agesToRender.length - 1]].map(
           (numYears) => numYears * NUM_MS_IN_ONE_YEAR
