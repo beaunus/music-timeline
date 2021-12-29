@@ -57,7 +57,7 @@ const Home: NextPage = () => {
     (_.last(years) ?? 0) + 2
   ).map(String);
 
-  const ages = _.sortBy(
+  const agesSorted = _.sortBy(
     _.uniq(
       Object.entries(releasesByPersonId).flatMap(
         ([personId, personReleases]) =>
@@ -68,7 +68,10 @@ const Home: NextPage = () => {
     )
   );
 
-  const agesToRender = _.range(_.first(ages) ?? 0, (_.last(ages) ?? 0) + 2);
+  const agesToRender = _.range(
+    _.first(agesSorted) ?? 0,
+    (_.last(agesSorted) ?? 0) + 2
+  );
 
   const [TIMESTAMP_START, TIMESTAMP_END] =
     mode === "byArtist"
