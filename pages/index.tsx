@@ -86,14 +86,18 @@ const Home: NextPage = () => {
 
   const ReleaseComponent: React.FC<{
     release: Release;
-    percentOfWhole: number;
-  }> = ({ percentOfWhole, release }) => (
+    numMsSinceStartTimestamp: number;
+  }> = ({ numMsSinceStartTimestamp, release }) => (
     <>
       <div
         className="absolute w-2 h-2 border-2"
         data-for={`${release.artistId}_${release.title}`}
         data-tip
-        style={{ left: `${100 * percentOfWhole}%` }}
+        style={{
+          left: `${
+            100 * (numMsSinceStartTimestamp / (TIMESTAMP_END - TIMESTAMP_START))
+          }%`,
+        }}
       />
       <ReactTooltip
         effect="float"
@@ -147,9 +151,8 @@ const Home: NextPage = () => {
                     {artistReleases.map((release) => (
                       <ReleaseComponent
                         key={_.uniqueId("release")}
-                        percentOfWhole={
-                          (release.releaseDate.valueOf() - TIMESTAMP_START) /
-                          (TIMESTAMP_END - TIMESTAMP_START)
+                        numMsSinceStartTimestamp={
+                          release.releaseDate.valueOf() - TIMESTAMP_START
                         }
                         release={release}
                       />
@@ -180,11 +183,10 @@ const Home: NextPage = () => {
                     {personReleases.map((release) => (
                       <ReleaseComponent
                         key={_.uniqueId("release")}
-                        percentOfWhole={
-                          (release.releaseDate.valueOf() -
-                            personById[personId].dateOfBirth.valueOf() -
-                            TIMESTAMP_START) /
-                          (TIMESTAMP_END - TIMESTAMP_START)
+                        numMsSinceStartTimestamp={
+                          release.releaseDate.valueOf() -
+                          personById[personId].dateOfBirth.valueOf() -
+                          TIMESTAMP_START
                         }
                         release={release}
                       />
