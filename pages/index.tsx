@@ -185,7 +185,10 @@ const Home: NextPage = () => {
                 )
             ).flatMap(([personId, personReleases]) => [
               <div className="text-right" key={_.uniqueId("artistId")}>
-                {personId}
+                {personId}{" "}
+                <span className="text-xs">
+                  ({artistIdsByPersonId[personId].join(" | ")})
+                </span>
               </div>,
               <div className="w-full" key={_.uniqueId("artistRelease")}>
                 <div className="flex items-center">
