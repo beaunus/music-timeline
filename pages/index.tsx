@@ -67,9 +67,7 @@ const Home: NextPage = () => {
     )
   );
 
-  const agesToRender = _.range(_.first(ages) ?? 0, (_.last(ages) ?? 0) + 2).map(
-    String
-  );
+  const agesToRender = _.range(_.first(ages) ?? 0, (_.last(ages) ?? 0) + 2);
 
   const [TIMESTAMP_START, TIMESTAMP_END] =
     mode === "byArtist"
@@ -78,8 +76,8 @@ const Home: NextPage = () => {
           new Date(yearsToRender?.[yearsToRender?.length - 1] || Date.now()),
         ].map((date) => date.valueOf())
       : [
-          Number(agesToRender[0]) * NUM_MS_IN_ONE_YEAR,
-          Number(agesToRender[agesToRender.length - 1]) * NUM_MS_IN_ONE_YEAR,
+          agesToRender[0] * NUM_MS_IN_ONE_YEAR,
+          agesToRender[agesToRender.length - 1] * NUM_MS_IN_ONE_YEAR,
         ];
 
   const modes: Mode[] = ["byArtist", "byMember"];
