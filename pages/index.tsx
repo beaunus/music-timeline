@@ -84,6 +84,19 @@ const Home: NextPage = () => {
 
   const modes: Mode[] = ["byArtist", "byMember"];
 
+  const ReleaseTooltip: React.FC<{ release: Release }> = ({ release }) => (
+    <ReactTooltip
+      effect="float"
+      id={`${release.artistId}_${release.title}`}
+      place="top"
+      type="dark"
+    >
+      <div>{release.artistId}</div>
+      <div>{release.releaseDate.toLocaleDateString()}</div>
+      <div>{release.title}</div>
+    </ReactTooltip>
+  );
+
   return (
     <>
       <div className="flex gap-6">
@@ -135,16 +148,7 @@ const Home: NextPage = () => {
                             }%`,
                           }}
                         />
-                        <ReactTooltip
-                          effect="float"
-                          id={`${release.artistId}_${release.title}`}
-                          place="top"
-                          type="dark"
-                        >
-                          <div>{release.artistId}</div>
-                          <div>{release.releaseDate.toLocaleDateString()}</div>
-                          <div>{release.title}</div>
-                        </ReactTooltip>
+                        <ReleaseTooltip release={release} />
                       </div>
                     ))}
                   </div>
@@ -186,16 +190,7 @@ const Home: NextPage = () => {
                             }%`,
                           }}
                         />
-                        <ReactTooltip
-                          effect="float"
-                          id={`${release.artistId}_${release.title}`}
-                          place="top"
-                          type="dark"
-                        >
-                          <div>{release.artistId}</div>
-                          <div>{release.releaseDate.toLocaleDateString()}</div>
-                          <div>{release.title}</div>
-                        </ReactTooltip>
+                        <ReleaseTooltip release={release} />
                       </div>
                     ))}
                   </div>
