@@ -92,7 +92,7 @@ const Home: NextPage = () => {
   }> = ({ numMsSinceStartTimestamp, release }) => (
     <>
       <div
-        className="absolute w-2 h-2 border-2"
+        className="absolute w-2 h-2 bg-slate-500 border-2"
         data-for={`${release.artistId}_${release.title}`}
         data-tip
         style={{
