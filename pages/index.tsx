@@ -71,16 +71,16 @@ const Home: NextPage = () => {
     String
   );
 
-  const TIMESTAMP_START =
+  const [TIMESTAMP_START, TIMESTAMP_END] =
     mode === "byArtist"
-      ? new Date(yearsToRender?.[0] || Date.now()).valueOf()
-      : Number(agesToRender[0]) * NUM_MS_IN_ONE_YEAR;
-  const TIMESTAMP_END =
-    mode === "byArtist"
-      ? new Date(
-          yearsToRender?.[yearsToRender?.length - 1] || Date.now()
-        ).valueOf()
-      : Number(agesToRender[agesToRender.length - 1]) * NUM_MS_IN_ONE_YEAR;
+      ? [
+          new Date(yearsToRender?.[0] || Date.now()),
+          new Date(yearsToRender?.[yearsToRender?.length - 1] || Date.now()),
+        ].map((date) => date.valueOf())
+      : [
+          Number(agesToRender[0]) * NUM_MS_IN_ONE_YEAR,
+          Number(agesToRender[agesToRender.length - 1]) * NUM_MS_IN_ONE_YEAR,
+        ];
 
   const modes: Mode[] = ["byArtist", "byMember"];
 
