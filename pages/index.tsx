@@ -57,11 +57,10 @@ const Home: NextPage = () => {
 
   const agesSorted = _.sortBy(
     _.uniq(
-      Object.entries(releasesByPersonId).flatMap(
-        ([personId, personReleases]) =>
-          personReleases.map(({ releaseDate }) =>
-            differenceInYears(releaseDate, personById[personId].dateOfBirth)
-          ) ?? 0
+      Object.entries(releasesByPersonId).flatMap(([personId, personReleases]) =>
+        personReleases.map(({ releaseDate }) =>
+          differenceInYears(releaseDate, personById[personId].dateOfBirth)
+        )
       )
     )
   );
