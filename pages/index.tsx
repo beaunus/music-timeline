@@ -84,17 +84,28 @@ const Home: NextPage = () => {
 
   const modes: Mode[] = ["byArtist", "byMember"];
 
-  const ReleaseTooltip: React.FC<{ release: Release }> = ({ release }) => (
-    <ReactTooltip
-      effect="float"
-      id={`${release.artistId}_${release.title}`}
-      place="top"
-      type="dark"
-    >
-      <div>{release.artistId}</div>
-      <div>{release.releaseDate.toLocaleDateString()}</div>
-      <div>{release.title}</div>
-    </ReactTooltip>
+  const ReleaseComponent: React.FC<{
+    release: Release;
+    percentOfWhole: number;
+  }> = ({ percentOfWhole, release }) => (
+    <>
+      <div
+        className="absolute w-2 h-2 border-2"
+        data-for={`${release.artistId}_${release.title}`}
+        data-tip
+        style={{ left: `${100 * percentOfWhole}%` }}
+      />
+      <ReactTooltip
+        effect="float"
+        id={`${release.artistId}_${release.title}`}
+        place="top"
+        type="dark"
+      >
+        <div>{release.artistId}</div>
+        <div>{release.releaseDate.toLocaleDateString()}</div>
+        <div>{release.title}</div>
+      </ReactTooltip>
+    </>
   );
 
   return (
@@ -134,22 +145,14 @@ const Home: NextPage = () => {
                   </div>
                   <div className="relative">
                     {artistReleases.map((release) => (
-                      <div key={_.uniqueId("release")}>
-                        <div
-                          className="absolute w-2 h-2 border-2"
-                          data-for={`${release.artistId}_${release.title}`}
-                          data-tip
-                          style={{
-                            left: `${
-                              (100 *
-                                (release.releaseDate.valueOf() -
-                                  TIMESTAMP_START)) /
-                              (TIMESTAMP_END - TIMESTAMP_START)
-                            }%`,
-                          }}
-                        />
-                        <ReleaseTooltip release={release} />
-                      </div>
+                      <ReleaseComponent
+                        key={_.uniqueId("release")}
+                        percentOfWhole={
+                          (release.releaseDate.valueOf() - TIMESTAMP_START) /
+                          (TIMESTAMP_END - TIMESTAMP_START)
+                        }
+                        release={release}
+                      />
                     ))}
                   </div>
                 </div>,
@@ -175,23 +178,16 @@ const Home: NextPage = () => {
                   </div>
                   <div className="relative">
                     {personReleases?.map((release) => (
-                      <div key={_.uniqueId("release")}>
-                        <div
-                          className="absolute w-2 h-2 border-2"
-                          data-for={`${release.artistId}_${release.title}`}
-                          data-tip
-                          style={{
-                            left: `${
-                              (100 *
-                                (release.releaseDate.valueOf() -
-                                  personById[personId].dateOfBirth.valueOf() -
-                                  TIMESTAMP_START)) /
-                              (TIMESTAMP_END - TIMESTAMP_START)
-                            }%`,
-                          }}
-                        />
-                        <ReleaseTooltip release={release} />
-                      </div>
+                      <ReleaseComponent
+                        key={_.uniqueId("release")}
+                        percentOfWhole={
+                          (release.releaseDate.valueOf() -
+                            personById[personId].dateOfBirth.valueOf() -
+                            TIMESTAMP_START) /
+                          (TIMESTAMP_END - TIMESTAMP_START)
+                        }
+                        release={release}
+                      />
                     ))}
                   </div>
                 </div>,
