@@ -11,8 +11,8 @@ type Mode = "byArtist" | "byMember";
 const NUM_MS_IN_ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 
 const Home: NextPage = () => {
-  const [artists, setArtists] = React.useState<Artist[]>();
-  const [releases, setReleases] = React.useState<Release[]>();
+  const [artists, setArtists] = React.useState<Artist[]>([]);
+  const [releases, setReleases] = React.useState<Release[]>([]);
   const [mode, setMode] = React.useState<Mode>("byMember");
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
   const releasesByArtist = _.groupBy(releases, "artistId");
   const artistIdsByPersonId = Object.fromEntries(
-    artists?.flatMap((artist) =>
+    artists.flatMap((artist) =>
       artist.members.map((member) => [
         member.id,
         artists
@@ -36,19 +36,19 @@ const Home: NextPage = () => {
   );
 
   const personById = _.keyBy(
-    _.uniq(artists?.flatMap((artist) => artist.members)),
+    _.uniq(artists.flatMap((artist) => artist.members)),
     "id"
   );
 
   const releasesByPersonId = Object.fromEntries(
     Object.entries(artistIdsByPersonId).map(([personId, artistIds]) => [
       personId,
-      releases?.filter(({ artistId }) => artistIds.includes(artistId)),
+      releases.filter(({ artistId }) => artistIds.includes(artistId)),
     ])
   );
 
   const years = _.sortBy(
-    _.uniq(releases?.map(({ releaseDate }) => getYear(releaseDate)))
+    _.uniq(releases.map(({ releaseDate }) => getYear(releaseDate)))
   );
 
   const yearsToRender = _.range(
@@ -60,7 +60,7 @@ const Home: NextPage = () => {
     _.uniq(
       Object.entries(releasesByPersonId).flatMap(
         ([personId, personReleases]) =>
-          personReleases?.map(({ releaseDate }) =>
+          personReleases.map(({ releaseDate }) =>
             differenceInYears(releaseDate, personById[personId].dateOfBirth)
           ) ?? 0
       )
@@ -72,8 +72,8 @@ const Home: NextPage = () => {
   const [TIMESTAMP_START, TIMESTAMP_END] =
     mode === "byArtist"
       ? [
-          new Date(yearsToRender?.[0] || Date.now()),
-          new Date(yearsToRender?.[yearsToRender?.length - 1] || Date.now()),
+          new Date(yearsToRender[0] || Date.now()),
+          new Date(yearsToRender[yearsToRender.length - 1] || Date.now()),
         ].map((date) => date.valueOf())
       : [agesToRender[0], agesToRender[agesToRender.length - 1]].map(
           (numYears) => numYears * NUM_MS_IN_ONE_YEAR
@@ -174,7 +174,7 @@ const Home: NextPage = () => {
                     <div className="w-full h-0 border-b-2"></div>
                   </div>
                   <div className="relative">
-                    {personReleases?.map((release) => (
+                    {personReleases.map((release) => (
                       <ReleaseComponent
                         key={_.uniqueId("release")}
                         percentOfWhole={
