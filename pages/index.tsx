@@ -6,6 +6,7 @@ import {
 } from "date-fns";
 import _ from "lodash";
 import type { NextPage } from "next";
+import Head from "next/head";
 import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 
@@ -116,6 +117,9 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Timeline</title>
+      </Head>
       <div className="flex gap-6">
         {modes.map((modeString) => (
           <div className="flex gap-2 items-center" key={_.uniqueId("mode")}>
