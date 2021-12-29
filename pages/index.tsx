@@ -16,12 +16,10 @@ const Home: NextPage = () => {
   const [mode, setMode] = React.useState<Mode>("byMember");
 
   useEffect(() => {
-    Promise.all([getReleases(), getArtists()]).then(
-      ([allReleases, allArtists]) => {
-        setReleases(allReleases);
-        setArtists(allArtists);
-      }
-    );
+    Promise.all([
+      getReleases().then(setReleases),
+      getArtists().then(setArtists),
+    ]);
   }, []);
 
   const releasesByArtist = _.groupBy(releases, "artistId");
