@@ -1,4 +1,4 @@
-import { differenceInYears, getYear } from "date-fns";
+import { differenceInYears, format, getYear } from "date-fns";
 import _ from "lodash";
 import type { NextPage } from "next";
 import React, { useEffect } from "react";
@@ -106,7 +106,7 @@ const Home: NextPage = () => {
         type="dark"
       >
         <div>{release.artistId}</div>
-        <div>{release.releaseDate.toLocaleDateString()}</div>
+        <div>{format(release.releaseDate, "yyyy-MM-dd (eee)")}</div>
         <div>{release.title}</div>
       </ReactTooltip>
     </>
