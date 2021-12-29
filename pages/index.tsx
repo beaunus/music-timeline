@@ -75,10 +75,9 @@ const Home: NextPage = () => {
           new Date(yearsToRender?.[0] || Date.now()),
           new Date(yearsToRender?.[yearsToRender?.length - 1] || Date.now()),
         ].map((date) => date.valueOf())
-      : [
-          agesToRender[0] * NUM_MS_IN_ONE_YEAR,
-          agesToRender[agesToRender.length - 1] * NUM_MS_IN_ONE_YEAR,
-        ];
+      : [agesToRender[0], agesToRender[agesToRender.length - 1]].map(
+          (numYears) => numYears * NUM_MS_IN_ONE_YEAR
+        );
 
   const modes: Mode[] = ["byArtist", "byMember"];
 
