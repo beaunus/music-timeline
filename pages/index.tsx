@@ -52,28 +52,24 @@ const Home: NextPage = () => {
     ])
   );
 
-  const years = _.sortBy(
-    _.uniq(releases.map(({ releaseDate }) => getYear(releaseDate)))
-  );
+  const years = _.uniq(releases.map(({ releaseDate }) => getYear(releaseDate)));
 
   const yearsToRender = _.range(
-    _.first(years) ?? 0,
-    (_.last(years) ?? 0) + 2
+    _.minBy(years) ?? 0,
+    (_.maxBy(years) ?? 0) + 2
   ).map(String);
 
-  const agesSorted = _.sortBy(
-    _.uniq(
-      Object.entries(releasesByPersonId).flatMap(([personId, personReleases]) =>
-        personReleases.map(({ releaseDate }) =>
-          differenceInYears(releaseDate, personById[personId].dateOfBirth)
-        )
+  const agesSorted = _.uniq(
+    Object.entries(releasesByPersonId).flatMap(([personId, personReleases]) =>
+      personReleases.map(({ releaseDate }) =>
+        differenceInYears(releaseDate, personById[personId].dateOfBirth)
       )
     )
   );
 
   const agesToRender = _.range(
-    _.first(agesSorted) ?? 0,
-    (_.last(agesSorted) ?? 0) + 2
+    _.minBy(agesSorted) ?? 0,
+    (_.maxBy(agesSorted) ?? 0) + 2
   );
 
   const [TIMESTAMP_START, TIMESTAMP_END] =
