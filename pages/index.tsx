@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   differenceInMilliseconds,
   differenceInYears,
@@ -10,7 +11,7 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 
-import { Artist, getArtists, getReleases, Release } from "../data/data";
+import { Artist, getArtists, Release } from "../data/data";
 
 type Mode = "byArtist" | "byMember";
 
@@ -19,11 +20,18 @@ const NUM_MS_IN_ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 const Home: NextPage = () => {
   const [artists, setArtists] = React.useState<Artist[]>([]);
   const [releases, setReleases] = React.useState<Release[]>([]);
-  const [mode, setMode] = React.useState<Mode>("byMember");
+  const [mode, setMode] = React.useState<Mode>("byArtist");
 
   useEffect(() => {
     Promise.all([
-      getReleases().then(setReleases),
+      axios.get<Release[]>("/api/hello").then(({ data }) => {
+        setReleases(
+          data.map((release) => ({
+            ...release,
+            releaseDate: new Date(release.releaseDate),
+          }))
+        );
+      }),
       getArtists().then(setArtists),
     ]);
   }, []);
