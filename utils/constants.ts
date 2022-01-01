@@ -1,5 +1,9 @@
 export const ARTIST_NAMES = [
+  "311",
+  "Billie Eilish",
   "Led Zeppelin",
+  "Rage Against the Machine",
+  "The Beach Boys",
   "The Beatles",
   "The Rolling Stones",
 ];
