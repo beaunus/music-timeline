@@ -30,7 +30,7 @@ export const getArtists = (): Promise<Artist[]> =>
       name: "Billie Eilish",
     },
     {
-      id: "The Beatles",
+      id: "3WrFJ7ztbogyGnTHbHJFl2",
       members: [
         {
           dateOfBirth: new Date("October 9, 1940"),

@@ -12,6 +12,7 @@ import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 
 import { Artist, getArtists, Release } from "../data/data";
+import { ARTIST_NAME_BY_ARTIST_ID } from "../utils/constants";
 
 type Mode = "byArtist" | "byMember";
 
@@ -155,7 +156,7 @@ const Home: NextPage = () => {
                   ?.releaseDate ?? 0
             ).flatMap(([artistId, artistReleases]) => [
               <div className="text-right" key={_.uniqueId("artistId")}>
-                {artistId}
+                {ARTIST_NAME_BY_ARTIST_ID[artistId]}
               </div>,
               <div className="w-full" key={_.uniqueId("artistRelease")}>
                 <div className="flex items-center">
@@ -195,7 +196,11 @@ const Home: NextPage = () => {
               <div className="text-right" key={_.uniqueId("artistId")}>
                 {personId}{" "}
                 <span className="text-xs">
-                  ({artistIdsByPersonId[personId].join(" | ")})
+                  (
+                  {artistIdsByPersonId[personId]
+                    .map((artistId) => ARTIST_NAME_BY_ARTIST_ID[artistId])
+                    .join(" | ")}
+                  )
                 </span>
               </div>,
               <div className="w-full" key={_.uniqueId("artistRelease")}>
