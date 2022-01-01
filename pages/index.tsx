@@ -118,7 +118,7 @@ const Home: NextPage = () => {
         place="top"
         type="dark"
       >
-        <div>{release.artistId}</div>
+        <div>{artistNameByArtistId[release.artistId]}</div>
         <div>{format(release.releaseDate, "yyyy-MM-dd (eee)")}</div>
         <div>{release.title}</div>
       </ReactTooltip>
