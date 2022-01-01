@@ -24,7 +24,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     Promise.all([
-      axios.get<Release[]>("/api/hello").then(({ data }) => {
+      axios.get<Release[]>("/api/releases").then(({ data }) => {
         setReleases(
           data.map((release) => ({
             ...release,
