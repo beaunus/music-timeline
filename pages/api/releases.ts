@@ -4,8 +4,11 @@ import _ from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { Release } from "../../data/data";
-import { getArtistNameByArtistId } from "../../utils/constants";
-import { getArtistAlbumsAll, isRelevantRelease } from "../../utils/spotify";
+import {
+  getArtistAlbumsAll,
+  getArtistNameByArtistId,
+  isRelevantRelease,
+} from "../../utils/spotify";
 
 export default function handler(
   _req: NextApiRequest,

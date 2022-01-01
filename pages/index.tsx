@@ -12,7 +12,6 @@ import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 
 import { Artist, getArtists, Release } from "../data/data";
-import { getArtistNameByArtistId } from "../utils/constants";
 
 type Mode = "byArtist" | "byMember";
 
@@ -28,7 +27,9 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     Promise.all([
-      getArtistNameByArtistId().then(setArtistNameByArtistId),
+      axios.get<Record<string, string>>("/api/artists").then(({ data }) => {
+        setArtistNameByArtistId(data);
+      }),
       axios.get<Release[]>("/api/releases").then(({ data }) => {
         setReleases(
           data.map((release) => ({

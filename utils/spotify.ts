@@ -3,7 +3,7 @@
 import { differenceInYears } from "date-fns";
 import SpotifyWebApi from "spotify-web-api-node";
 
-import { MAX_DURATION_OF_CAREER_IN_YEARS } from "./constants";
+import { ARTIST_NAMES, MAX_DURATION_OF_CAREER_IN_YEARS } from "./constants";
 
 const spotifyWebApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -32,6 +32,20 @@ export function getArtistAlbumsAll(
       )
   );
 }
+
+export function getArtistId(artistName: string) {
+  return getSpotifyClient().then((spotifyClient) =>
+    spotifyClient
+      .searchArtists(artistName)
+      .then((result) => result.body.artists?.items[0].id)
+  );
+}
+export const getArtistNameByArtistId = () =>
+  Promise.all(
+    ARTIST_NAMES.map((artistName) =>
+      getArtistId(artistName).then((artistId) => [artistId, artistName])
+    )
+  ).then((entries) => Object.fromEntries(entries));
 
 export function getSpotifyClient() {
   return spotifyWebApi.getAccessToken() &&
