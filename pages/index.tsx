@@ -12,7 +12,7 @@ import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 
 import { Artist, getArtists, Release } from "../data/data";
-import { ARTIST_NAME_BY_ARTIST_ID } from "../utils/constants";
+import { getArtistNameByArtistId } from "../utils/constants";
 
 type Mode = "byArtist" | "byMember";
 
@@ -21,10 +21,14 @@ const NUM_MS_IN_ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 const Home: NextPage = () => {
   const [artists, setArtists] = React.useState<Artist[]>([]);
   const [releases, setReleases] = React.useState<Release[]>([]);
+  const [artistNameByArtistId, setArtistNameByArtistId] = React.useState<
+    Record<string, string>
+  >({});
   const [mode, setMode] = React.useState<Mode>("byArtist");
 
   useEffect(() => {
     Promise.all([
+      getArtistNameByArtistId().then(setArtistNameByArtistId),
       axios.get<Release[]>("/api/releases").then(({ data }) => {
         setReleases(
           data.map((release) => ({
@@ -156,7 +160,7 @@ const Home: NextPage = () => {
                   ?.releaseDate ?? 0
             ).flatMap(([artistId, artistReleases]) => [
               <div className="text-right" key={_.uniqueId("artistId")}>
-                {ARTIST_NAME_BY_ARTIST_ID[artistId]}
+                {artistNameByArtistId[artistId]}
               </div>,
               <div className="w-full" key={_.uniqueId("artistRelease")}>
                 <div className="flex items-center">
@@ -198,7 +202,7 @@ const Home: NextPage = () => {
                 <span className="text-xs">
                   (
                   {artistIdsByPersonId[personId]
-                    .map((artistId) => ARTIST_NAME_BY_ARTIST_ID[artistId])
+                    .map((artistId) => artistNameByArtistId[artistId])
                     .join(" | ")}
                   )
                 </span>
