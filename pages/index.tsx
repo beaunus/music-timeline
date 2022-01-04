@@ -12,6 +12,7 @@ import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 
 import { Artist, getArtists, Release } from "../data/data";
+import { shortenArray } from "../utils/utils";
 
 type Mode = "byArtist" | "byMember";
 
@@ -68,10 +69,10 @@ const Home: NextPage = () => {
 
   const years = _.uniq(releases.map(({ releaseDate }) => getYear(releaseDate)));
 
-  const yearsToRender = _.range(
-    _.minBy(years) ?? 0,
-    (_.maxBy(years) ?? 0) + 2
-  ).map(String);
+  const yearsToRender = shortenArray(
+    _.range(_.minBy(years) ?? 0, (_.maxBy(years) ?? 0) + 2).map(String),
+    20
+  );
 
   const agesSorted = _.uniq(
     Object.entries(releasesByPersonId).flatMap(([personId, personReleases]) =>
@@ -81,9 +82,9 @@ const Home: NextPage = () => {
     )
   );
 
-  const agesToRender = _.range(
-    _.minBy(agesSorted) ?? 0,
-    (_.maxBy(agesSorted) ?? 0) + 2
+  const agesToRender = shortenArray(
+    _.range(_.minBy(agesSorted) ?? 0, (_.maxBy(agesSorted) ?? 0) + 2),
+    20
   );
 
   const [TIMESTAMP_START, TIMESTAMP_END] =

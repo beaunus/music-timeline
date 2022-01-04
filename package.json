@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "jest"
   },
   "dependencies": {
     "axios": "^0.24.0",
@@ -19,8 +20,11 @@
     "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
     "@beaunus123/style-config": "^1.1.5",
+    "@types/jest": "^27.4.0",
     "@types/lodash": "^4.14.178",
     "@types/node": "17.0.5",
     "@types/react": "17.0.38",
@@ -28,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.0.0",
     "autoprefixer": "^10.4.0",
+    "babel-jest": "^27.4.5",
     "eslint": "8.5.0",
     "eslint-config-next": "12.0.7",
     "eslint-config-prettier": "^8.3.0",
