@@ -1,22 +1,15 @@
+import { Chip } from "@mui/material";
 import axios from "axios";
-import {
-  differenceInMilliseconds,
-  differenceInYears,
-  format,
-  getYear,
-} from "date-fns";
+import { format, getYear } from "date-fns";
 import _ from "lodash";
 import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 
-import { Artist, getArtists, Release } from "../data/data";
+import { Release } from "..";
+import { Artist, getArtists } from "../data/data";
 import { shortenArray } from "../utils/utils";
-
-type Mode = "byArtist" | "byMember";
-
-const NUM_MS_IN_ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 
 const Home: NextPage = () => {
   const [artists, setArtists] = React.useState<Artist[]>([]);
@@ -24,48 +17,33 @@ const Home: NextPage = () => {
   const [artistNameByArtistId, setArtistNameByArtistId] = React.useState<
     Record<string, string>
   >({});
-  const [mode, setMode] = React.useState<Mode>("byArtist");
 
   useEffect(() => {
-    Promise.all([
-      axios.get<Record<string, string>>("/api/artists").then(({ data }) => {
-        setArtistNameByArtistId(data);
-      }),
-      axios.get<Release[]>("/api/releases").then(({ data }) => {
-        setReleases(
-          data.map((release) => ({
-            ...release,
-            releaseDate: new Date(release.releaseDate),
-          }))
-        );
-      }),
-      getArtists().then(setArtists),
-    ]);
+    getArtists().then(setArtists);
   }, []);
 
+  useEffect(() => {
+    setArtistNameByArtistId(_.mapValues(_.keyBy(artists, "id"), "name"));
+  }, [artists]);
+
+  useEffect(() => {
+    Promise.all(
+      artists.map(({ id }) =>
+        axios
+          .get<Release[]>(`/api/artist/${id}/releases`)
+          .then(({ data }) => data)
+      )
+    ).then((arrayOfArraysOfReleases) =>
+      setReleases(
+        arrayOfArraysOfReleases.flat().map((release) => ({
+          ...release,
+          releaseDate: new Date(release.releaseDate),
+        }))
+      )
+    );
+  }, [artists]);
+
   const releasesByArtist = _.groupBy(releases, "artistId");
-  const artistIdsByPersonId = Object.fromEntries(
-    artists.flatMap((artist) =>
-      artist.members.map((member) => [
-        member.id,
-        artists
-          .filter(({ members }) => members.some(({ id }) => id === member.id))
-          .map(({ id }) => id),
-      ])
-    ) ?? []
-  );
-
-  const personById = _.keyBy(
-    _.uniq(artists.flatMap((artist) => artist.members)),
-    "id"
-  );
-
-  const releasesByPersonId = Object.fromEntries(
-    Object.entries(artistIdsByPersonId).map(([personId, artistIds]) => [
-      personId,
-      releases.filter(({ artistId }) => artistIds.includes(artistId)),
-    ])
-  );
 
   const years = _.uniq(releases.map(({ releaseDate }) => getYear(releaseDate)));
 
@@ -74,29 +52,10 @@ const Home: NextPage = () => {
     20
   );
 
-  const agesSorted = _.uniq(
-    Object.entries(releasesByPersonId).flatMap(([personId, personReleases]) =>
-      personReleases.map(({ releaseDate }) =>
-        differenceInYears(releaseDate, personById[personId].dateOfBirth)
-      )
-    )
-  );
-
-  const agesToRender = shortenArray(
-    _.range(_.minBy(agesSorted) ?? 0, (_.maxBy(agesSorted) ?? 0) + 2),
-    20
-  );
-
-  const [TIMESTAMP_START, TIMESTAMP_END] =
-    mode === "byArtist"
-      ? [_.first(yearsToRender) ?? 0, _.last(yearsToRender) ?? 0].map(
-          (yearString) => new Date(yearString).valueOf()
-        )
-      : [_.first(agesToRender) ?? 0, _.last(agesToRender) ?? 0].map(
-          (numYears) => numYears * NUM_MS_IN_ONE_YEAR
-        );
-
-  const modes: Mode[] = ["byArtist", "byMember"];
+  const [TIMESTAMP_START, TIMESTAMP_END] = [
+    _.first(yearsToRender) ?? 0,
+    _.last(yearsToRender) ?? 0,
+  ].map((yearString) => new Date(yearString).valueOf());
 
   const ReleaseComponent: React.FC<{
     numMsSinceStartTimestamp: number;
@@ -131,23 +90,20 @@ const Home: NextPage = () => {
       <Head>
         <title>Timeline</title>
       </Head>
-      <div className="flex gap-6">
-        {modes.map((modeString) => (
-          <div className="flex gap-2 items-center" key={_.uniqueId("mode")}>
-            <input
-              defaultChecked={mode === modeString}
-              id={modeString}
-              name="mode"
-              onClick={() => setMode(modeString)}
-              type="radio"
-              value={modeString}
-            />
-            <label htmlFor={modeString}>{modeString}</label>
+      <div className="flex flex-col">
+        <div className="flex flex-col">
+          <div>Selected Artists</div>
+          <div className="flex">
+            {artists.map(({ name }) => (
+              <Chip
+                key={_.uniqueId("artistName")}
+                label={name}
+                variant="outlined"
+              />
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-[max-content_auto] space-x-1 w-full">
-        {mode === "byArtist" ? (
+        </div>
+        <div className="grid grid-cols-[max-content_auto] space-x-1 w-full">
           <>
             <div />
             <div className="flex gap-1 justify-between">
@@ -182,54 +138,7 @@ const Home: NextPage = () => {
               </div>,
             ])}
           </>
-        ) : (
-          <>
-            <div />
-            <div className="flex gap-1 justify-between">
-              {agesToRender.map((year) => (
-                <div key={_.uniqueId("year")}>{year}</div>
-              ))}
-            </div>
-            {_.sortBy(
-              Object.entries(releasesByPersonId),
-              ([personId, personReleases]) =>
-                differenceInMilliseconds(
-                  _.minBy(personReleases, (release) => release.releaseDate)
-                    ?.releaseDate ?? 0,
-                  personById[personId].dateOfBirth
-                )
-            ).flatMap(([personId, personReleases]) => [
-              <div className="text-right" key={_.uniqueId("artistId")}>
-                {personId}{" "}
-                <span className="text-xs">
-                  (
-                  {artistIdsByPersonId[personId]
-                    .map((artistId) => artistNameByArtistId[artistId])
-                    .join(" | ")}
-                  )
-                </span>
-              </div>,
-              <div className="w-full" key={_.uniqueId("artistRelease")}>
-                <div className="flex items-center">
-                  <div className="w-full h-0 border-b-2"></div>
-                </div>
-                <div className="relative">
-                  {personReleases.map((release) => (
-                    <ReleaseComponent
-                      key={_.uniqueId("release")}
-                      numMsSinceStartTimestamp={
-                        release.releaseDate.valueOf() -
-                        personById[personId].dateOfBirth.valueOf() -
-                        TIMESTAMP_START
-                      }
-                      release={release}
-                    />
-                  ))}
-                </div>
-              </div>,
-            ])}
-          </>
-        )}
+        </div>
       </div>
     </>
   );
