@@ -11,6 +11,41 @@ import { Release } from "..";
 import { Artist, getArtists } from "../data/data";
 import { shortenArray } from "../utils/utils";
 
+const ReleaseComponent: React.FC<{
+  artistName: string;
+  numMsSinceStartTimestamp: number;
+  range: { endTimestamp: number; startTimestamp: number };
+  release: Release;
+}> = ({
+  artistName,
+  numMsSinceStartTimestamp,
+  range: { endTimestamp, startTimestamp },
+  release,
+}) => (
+  <>
+    <div
+      className="absolute w-2 h-2 bg-slate-500 border-2"
+      data-for={`${release.artistId}_${release.title}`}
+      data-tip
+      style={{
+        left: `${
+          100 * (numMsSinceStartTimestamp / (endTimestamp - startTimestamp))
+        }%`,
+      }}
+    />
+    <ReactTooltip
+      effect="float"
+      id={`${release.artistId}_${release.title}`}
+      place="top"
+      type="dark"
+    >
+      <div>{artistName}</div>
+      <div>{format(release.releaseDate, "yyyy-MM-dd (eee)")}</div>
+      <div>{release.title}</div>
+    </ReactTooltip>
+  </>
+);
+
 const Home: NextPage = () => {
   const [artists, setArtists] = React.useState<Artist[]>([]);
   const [releases, setReleases] = React.useState<Release[]>([]);
@@ -57,34 +92,6 @@ const Home: NextPage = () => {
     _.last(yearsToRender) ?? 0,
   ].map((yearString) => new Date(yearString).valueOf());
 
-  const ReleaseComponent: React.FC<{
-    numMsSinceStartTimestamp: number;
-    release: Release;
-  }> = ({ numMsSinceStartTimestamp, release }) => (
-    <>
-      <div
-        className="absolute w-2 h-2 bg-slate-500 border-2"
-        data-for={`${release.artistId}_${release.title}`}
-        data-tip
-        style={{
-          left: `${
-            100 * (numMsSinceStartTimestamp / (TIMESTAMP_END - TIMESTAMP_START))
-          }%`,
-        }}
-      />
-      <ReactTooltip
-        effect="float"
-        id={`${release.artistId}_${release.title}`}
-        place="top"
-        type="dark"
-      >
-        <div>{artistNameByArtistId[release.artistId]}</div>
-        <div>{format(release.releaseDate, "yyyy-MM-dd (eee)")}</div>
-        <div>{release.title}</div>
-      </ReactTooltip>
-    </>
-  );
-
   return (
     <>
       <Head>
@@ -127,10 +134,15 @@ const Home: NextPage = () => {
                 <div className="relative">
                   {artistReleases.map((release) => (
                     <ReleaseComponent
+                      artistName={artistNameByArtistId[release.artistId]}
                       key={_.uniqueId("release")}
                       numMsSinceStartTimestamp={
                         release.releaseDate.valueOf() - TIMESTAMP_START
                       }
+                      range={{
+                        endTimestamp: TIMESTAMP_END,
+                        startTimestamp: TIMESTAMP_START,
+                      }}
                       release={release}
                     />
                   ))}
