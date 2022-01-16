@@ -13,25 +13,15 @@ import { shortenArray } from "../utils/utils";
 
 const ReleaseComponent: React.FC<{
   artistName: string;
-  numMsSinceStartTimestamp: number;
-  range: { endTimestamp: number; startTimestamp: number };
+  rangeOffset: number;
   release: Release;
-}> = ({
-  artistName,
-  numMsSinceStartTimestamp,
-  range: { endTimestamp, startTimestamp },
-  release,
-}) => (
+}> = ({ artistName, rangeOffset, release }) => (
   <>
     <div
       className="absolute w-2 h-2 bg-slate-500 border-2"
       data-for={`${release.artistId}_${release.title}`}
       data-tip
-      style={{
-        left: `${
-          100 * (numMsSinceStartTimestamp / (endTimestamp - startTimestamp))
-        }%`,
-      }}
+      style={{ left: `${100 * rangeOffset}%` }}
     />
     <ReactTooltip
       effect="float"
@@ -136,13 +126,10 @@ const Home: NextPage = () => {
                     <ReleaseComponent
                       artistName={artistNameByArtistId[release.artistId]}
                       key={_.uniqueId("release")}
-                      numMsSinceStartTimestamp={
-                        release.releaseDate.valueOf() - TIMESTAMP_START
+                      rangeOffset={
+                        (release.releaseDate.valueOf() - TIMESTAMP_START) /
+                        (TIMESTAMP_END - TIMESTAMP_START)
                       }
-                      range={{
-                        endTimestamp: TIMESTAMP_END,
-                        startTimestamp: TIMESTAMP_START,
-                      }}
                       release={release}
                     />
                   ))}
