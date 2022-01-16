@@ -76,42 +76,40 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="grid grid-cols-[max-content_auto] space-x-1 w-full">
-          <>
-            <div />
-            <div className="flex gap-1 justify-between">
-              {yearsToRender.map((year) => (
-                <div key={_.uniqueId("year")}>{year}</div>
-              ))}
-            </div>
-            {_.sortBy(
-              Object.entries(releasesByArtist),
-              ([, artistReleases]) =>
-                _.minBy(artistReleases, (release) => release.releaseDate)
-                  ?.releaseDate ?? 0
-            ).flatMap(([artistId, artistReleases]) => [
-              <div className="text-right" key={_.uniqueId("artistId")}>
-                {artistNameByArtistId[artistId]}
-              </div>,
-              <div className="w-full" key={_.uniqueId("artistRelease")}>
-                <div className="flex items-center">
-                  <div className="w-full h-0 border-b-2"></div>
-                </div>
-                <div className="relative">
-                  {artistReleases.map((release) => (
-                    <TimelinePoint
-                      artistName={artistNameByArtistId[release.artistId]}
-                      key={_.uniqueId("release")}
-                      rangeOffset={
-                        (release.releaseDate.valueOf() - TIMESTAMP_START) /
-                        (TIMESTAMP_END - TIMESTAMP_START)
-                      }
-                      release={release}
-                    />
-                  ))}
-                </div>
-              </div>,
-            ])}
-          </>
+          <div />
+          <div className="flex gap-1 justify-between">
+            {yearsToRender.map((year) => (
+              <div key={_.uniqueId("year")}>{year}</div>
+            ))}
+          </div>
+          {_.sortBy(
+            Object.entries(releasesByArtist),
+            ([, artistReleases]) =>
+              _.minBy(artistReleases, (release) => release.releaseDate)
+                ?.releaseDate ?? 0
+          ).flatMap(([artistId, artistReleases]) => [
+            <div className="text-right" key={_.uniqueId("artistId")}>
+              {artistNameByArtistId[artistId]}
+            </div>,
+            <div className="w-full" key={_.uniqueId("artistRelease")}>
+              <div className="flex items-center">
+                <div className="w-full h-0 border-b-2"></div>
+              </div>
+              <div className="relative">
+                {artistReleases.map((release) => (
+                  <TimelinePoint
+                    artistName={artistNameByArtistId[release.artistId]}
+                    key={_.uniqueId("release")}
+                    rangeOffset={
+                      (release.releaseDate.valueOf() - TIMESTAMP_START) /
+                      (TIMESTAMP_END - TIMESTAMP_START)
+                    }
+                    release={release}
+                  />
+                ))}
+              </div>
+            </div>,
+          ])}
         </div>
       </div>
     </>
