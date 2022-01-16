@@ -1,40 +1,15 @@
 import { Chip } from "@mui/material";
 import axios from "axios";
-import { format, getYear } from "date-fns";
+import { getYear } from "date-fns";
 import _ from "lodash";
 import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect } from "react";
-import ReactTooltip from "react-tooltip";
 
 import { Release } from "..";
+import { TimelinePoint } from "../components/TimelinePoint";
 import { Artist, getArtists } from "../data/data";
 import { shortenArray } from "../utils/utils";
-
-const TimelinePoint: React.FC<{
-  artistName: string;
-  rangeOffset: number;
-  release: Release;
-}> = ({ artistName, rangeOffset, release }) => (
-  <>
-    <div
-      className="absolute w-2 h-2 bg-slate-500 border-2"
-      data-for={`${release.artistId}_${release.title}`}
-      data-tip
-      style={{ left: `${100 * rangeOffset}%` }}
-    />
-    <ReactTooltip
-      effect="float"
-      id={`${release.artistId}_${release.title}`}
-      place="top"
-      type="dark"
-    >
-      <div>{artistName}</div>
-      <div>{format(release.releaseDate, "yyyy-MM-dd (eee)")}</div>
-      <div>{release.title}</div>
-    </ReactTooltip>
-  </>
-);
 
 const Home: NextPage = () => {
   const [artists, setArtists] = React.useState<Artist[]>([]);
