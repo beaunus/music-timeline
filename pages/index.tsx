@@ -11,7 +11,7 @@ import { Release } from "..";
 import { Artist, getArtists } from "../data/data";
 import { shortenArray } from "../utils/utils";
 
-const ReleaseComponent: React.FC<{
+const TimelinePoint: React.FC<{
   artistName: string;
   rangeOffset: number;
   release: Release;
@@ -123,7 +123,7 @@ const Home: NextPage = () => {
                 </div>
                 <div className="relative">
                   {artistReleases.map((release) => (
-                    <ReleaseComponent
+                    <TimelinePoint
                       artistName={artistNameByArtistId[release.artistId]}
                       key={_.uniqueId("release")}
                       rangeOffset={
