@@ -56,6 +56,7 @@ const Home: NextPage = () => {
     _.first(yearsToRender) ?? 0,
     _.last(yearsToRender) ?? 0,
   ].map((yearString) => new Date(yearString).valueOf());
+  const timelineLengthInMs = TIMESTAMP_END - TIMESTAMP_START;
 
   return (
     <>
@@ -102,7 +103,7 @@ const Home: NextPage = () => {
                     key={_.uniqueId("release")}
                     rangeOffset={
                       (release.releaseDate.valueOf() - TIMESTAMP_START) /
-                      (TIMESTAMP_END - TIMESTAMP_START)
+                      timelineLengthInMs
                     }
                     release={release}
                   />
