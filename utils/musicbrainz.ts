@@ -1,4 +1,4 @@
-import axios from "axios";
+import { get } from "./axiosMemoized";
 
 interface ReleaseGroup {
   disambiguation: string;
@@ -12,12 +12,10 @@ interface ReleaseGroup {
 }
 
 export const getReleaseGroups = ({ artistId }: { artistId: string }) =>
-  axios
-    .get<{
-      "release-group-count": number;
-      "release-group-offset": number;
-      "release-groups": ReleaseGroup[];
-    }>(
-      `https://musicbrainz.org//ws/2/release-group?artist=${artistId}&type=album|ep&fmt=json`
-    )
-    .then(({ data }) => data["release-groups"]);
+  get<{
+    "release-group-count": number;
+    "release-group-offset": number;
+    "release-groups": ReleaseGroup[];
+  }>(
+    `https://musicbrainz.org//ws/2/release-group?artist=${artistId}&type=album|ep&fmt=json`
+  ).then(({ data }) => data["release-groups"]);
