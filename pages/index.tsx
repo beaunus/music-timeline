@@ -99,8 +99,8 @@ const Home: NextPage = () => {
   const modes: Mode[] = ["byArtist", "byMember"];
 
   const ReleaseComponent: React.FC<{
-    release: Release;
     numMsSinceStartTimestamp: number;
+    release: Release;
   }> = ({ numMsSinceStartTimestamp, release }) => (
     <>
       <div

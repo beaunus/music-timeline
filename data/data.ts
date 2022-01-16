@@ -1,13 +1,13 @@
 export interface Artist {
-  members: Person[];
   id: string;
+  members: Person[];
   name: string;
 }
 
 export interface Person {
+  dateOfBirth: Date;
   id: string;
   name: string;
-  dateOfBirth: Date;
 }
 
 export interface Release {
